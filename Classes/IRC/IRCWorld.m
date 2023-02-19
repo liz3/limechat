@@ -632,10 +632,10 @@
         NSDictionary* params = @{};
         
         NSData *httpBody = [self createBodyWithBoundary:boundary parameters:params object:object fieldName:@"datafile"];
-
+        NSString* tkn = [Preferences uploadToken];
         NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
         [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
-        [request setValue:@"" forHTTPHeaderField: @"Authorization"];
+        [request setValue:tkn forHTTPHeaderField: @"Authorization"];
 
         
         NSURLSession *session = [NSURLSession sharedSession];  // use sharedSession or create your own

@@ -367,6 +367,20 @@ static NSMutableArray* excludeWords;
     [ud setObject:value forKey:@"Preferences.General.transcript_folder"];
 }
 
+#pragma mark - Liz3 things
+
++ (NSString*)uploadToken
+{
+    NSUserDefaults* ud = [NSUserDefaults standardUserDefaults];
+    return [ud objectForKey:@"Preferences.General.iliz3_token"];
+}
+
++ (void)setUploadToken:(NSString*)value
+{
+    NSUserDefaults* ud = [NSUserDefaults standardUserDefaults];
+    [ud setObject:value forKey:@"Preferences.General.iliz3_token"];
+}
+
 #pragma mark - Events
 
 + (NSString*)titleForEvent:(UserNotificationType)event

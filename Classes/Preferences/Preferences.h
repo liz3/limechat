@@ -147,4 +147,7 @@ typedef enum {
 
 + (void)sync;
 
++ (void)setUploadToken:(NSString*)value;
++ (NSString*) uploadToken;
+
 @end
