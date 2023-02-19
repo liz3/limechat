@@ -617,6 +617,77 @@
     [_tree setNeedsDisplay];
 }
 
+- (bool)sendPng
+{
+    NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
+    if([[pasteboard types] containsObject:NSPasteboardTypePNG]) {
+        NSData* object = [pasteboard dataForType   :NSPasteboardTypePNG];
+        
+        NSString *boundary = [self generateBoundaryString];
+      
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL
+                                                                                 URLWithString:@"https://i.liz3.net/add/0"]];
+        [request setHTTPMethod:@"POST"];
+        
+        NSDictionary* params = @{};
+        
+        NSData *httpBody = [self createBodyWithBoundary:boundary parameters:params object:object fieldName:@"datafile"];
+
+        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
+        [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
+        [request setValue:@"" forHTTPHeaderField: @"Authorization"];
+
+        
+        NSURLSession *session = [NSURLSession sharedSession];  // use sharedSession or create your own
+
+        NSURLSessionTask *task = [session uploadTaskWithRequest:request fromData:httpBody completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if (error) {
+                NSLog(@"error = %@", error);
+                return;
+            }
+
+            NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                [self inputText:[NSString stringWithFormat:@"%@%@", @"https://i.liz3.net/d/", result] command:PRIVMSG];
+             }];
+
+            
+        }];
+        [task resume];
+        return TRUE;
+    }
+    return FALSE;
+}
+- (NSString *)generateBoundaryString {
+    return [NSString stringWithFormat:@"Boundary-%@", [[NSUUID UUID] UUIDString]];
+}
+- (NSData *)createBodyWithBoundary:(NSString *)boundary
+                        parameters:(NSDictionary *)parameters
+                             object:(NSData *)object
+                         fieldName:(NSString *)fieldName {
+    NSMutableData *httpBody = [NSMutableData data];
+
+    // add params (all params are strings)
+
+    [parameters enumerateKeysAndObjectsUsingBlock:^(NSString *parameterKey, NSString *parameterValue, BOOL *stop) {
+        [httpBody appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+        [httpBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", parameterKey] dataUsingEncoding:NSUTF8StringEncoding]];
+        [httpBody appendData:[[NSString stringWithFormat:@"%@\r\n", parameterValue] dataUsingEncoding:NSUTF8StringEncoding]];
+    }];
+
+
+        [httpBody appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [httpBody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", fieldName, @"test.png"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [httpBody appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n\r\n", @"image/png"] dataUsingEncoding:NSUTF8StringEncoding]];
+        [httpBody appendData:object];
+        [httpBody appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    
+
+    [httpBody appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+
+    return httpBody;
+}
+
 - (void)changeMemberListTheme
 {
     OtherTheme* theme = _viewTheme.other;

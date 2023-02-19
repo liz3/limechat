@@ -347,6 +347,11 @@
 
 - (BOOL)fieldEditorTextViewPaste:(id)sender;
 {
+    NSLog(@"called\n");
+    bool pngRes = [_world sendPng];
+    if(pngRes) {
+        return YES;
+    }
     NSString* s = [[NSPasteboard generalPasteboard] stringContent];
     if (!s.length) return NO;
 

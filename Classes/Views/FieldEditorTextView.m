@@ -18,6 +18,10 @@
     return self;
 }
 
+-(bool)readSelection: (NSPasteboard*)board type: (NSPasteboardType)aType{
+    NSLog(@"aaa");
+    return true;
+}
 - (void)paste:(id)sender
 {
     if (_pasteDelegate) {

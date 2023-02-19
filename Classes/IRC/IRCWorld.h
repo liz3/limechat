@@ -82,6 +82,7 @@
 - (void)markAllScrollbacks;
 
 - (void)updateIcon;
+- (bool)sendPng;
 - (void)reloadTree;
 - (void)adjustSelection;
 - (void)expandClient:(IRCClient*)client;

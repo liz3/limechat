@@ -349,6 +349,12 @@
     [_world.dcc show:YES];
 }
 
+- (IBAction)onSendPng:(id)sender {
+    
+    [_world sendPng];
+}
+
+
 - (void)onMainWindow:(id)sender
 {
     [_window makeKeyAndOrderFront:nil];
@@ -1147,7 +1153,7 @@
     [d setResolvesAliases:YES];
     [d setAllowsMultipleSelection:YES];
     [d setCanCreateDirectories:NO];
-    d.directoryURL = [NSURL fileURLWithPath:@"~/Desktop" isDirectory:YES];
+    d.directoryURL = [NSURL fileURLWithPath:@"~" isDirectory:YES];
 
     __block MenuController* blockSelf = self;
     [d beginWithCompletionHandler:^(NSInteger result) {
